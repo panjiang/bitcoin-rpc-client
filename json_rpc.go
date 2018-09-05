@@ -137,8 +137,8 @@ func (btc *BitcoinRPC) GetAccountAddress(account string) (string, error) {
 
 // GetReceivedByAddress returns the total amount received by the given address
 // in transactions with at least 1 confirmation.
-func (btc *BitcoinRPC) GetReceivedByAddress(address string) (float64, error) {
-	ret, err := btc.Call("getreceivedbyaddress", []interface{}{address})
+func (btc *BitcoinRPC) GetReceivedByAddress(address string, minconf int) (float64, error) {
+	ret, err := btc.Call("getreceivedbyaddress", []interface{}{address, minconf})
 	if err != nil {
 		return 0, err
 	}
@@ -148,8 +148,8 @@ func (btc *BitcoinRPC) GetReceivedByAddress(address string) (float64, error) {
 
 // GetReceivedByAccount returns the total amount received by addresses in a particular
 // account from transactions with the specified number of confirmations.
-func (btc *BitcoinRPC) GetReceivedByAccount(account string) (float64, error) {
-	ret, err := btc.Call("getreceivedbyaccount", []interface{}{account})
+func (btc *BitcoinRPC) GetReceivedByAccount(account string, minconf int) (float64, error) {
+	ret, err := btc.Call("getreceivedbyaccount", []interface{}{account, minconf})
 	if err != nil {
 		return 0, err
 	}
@@ -165,4 +165,23 @@ func (btc *BitcoinRPC) SendToAddress(address string, amount float64) (string, er
 	}
 
 	return ret.(string), nil
+}
+
+// ImportAddress imports a address
+func (btc *BitcoinRPC) ImportAddress(address string) error {
+	_, err := btc.Call("importaddress", []interface{}{address})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ValidateAddress returns information about the given address
+func (btc *BitcoinRPC) ValidateAddress(address string) (map[string]interface{}, error) {
+	ret, err := btc.Call("validateaddress", []interface{}{address})
+	if err != nil {
+		return nil, err
+	}
+	return ret.(map[string]interface{}), err
 }
